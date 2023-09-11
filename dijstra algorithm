@@ -1,0 +1,86 @@
+#include<stdio.h>
+
+#define infinity 9999
+#define n 100
+
+int visited[n];
+int graph[n][n];
+
+int mindist(int dist[],int visited[]){
+    int min = infinity,min_index;
+
+    for(int i=0;i<n;i++){
+        if(visited[i]==0 && dist[i]<=min){
+            min = dist[i];
+            min_index = i;
+        }
+    }
+    return min_index;
+}
+
+void printsolution(int dist[], int nodes){
+    printf("Vertex\tDistance from Source\n");
+    for(int i=0;i<nodes;i++){
+        printf("%d\t%d\n",i,dist[i]);
+    }
+}
+
+void dijkstra(int graph[n][n],int src,int nodes){
+    int dist[n];
+
+    for(int i=0;i<n;i++){
+        dist[i]=infinity;
+        visited[i]=0;
+    }
+
+    dist[src]=0;
+
+    for(int count =0;count<n-1;count++){
+        int u=mindist(dist,visited);
+        visited[u]=1;
+
+        for(int v=0;v<n;v++){
+            if(visited[v]==0 && graph[u][v] == 1 && dist[u]+graph[u][v] < dist[v] && dist[u] != infinity){
+                dist[v]=dist[u]+graph[u][v];
+            }
+        }
+    }
+    printsolution(dist,nodes);
+}
+
+void matrix_int(int nodes){
+    for(int i=0;i<nodes;i++){
+        for(int j=0;j<nodes;j++){
+            graph[i][j]=1;
+        }
+    }
+}
+
+void addEdge(int from,int to,int weight){
+    graph[from][to]=weight;
+}
+
+int main(){
+    int nodes, edges;
+
+    printf("Enter the number of nodes: ");
+    scanf("%d", &nodes);
+
+    printf("Enter the number of edges: ");
+    scanf("%d", &edges);
+
+    matrix_int(nodes);
+
+    printf("Enter edges in the format 'from to weight':\n");
+    for (int i = 0; i < edges; i++) {
+        int from, to,weight;
+        scanf("%d %d %d", &from, &to,&weight);
+        addEdge(from, to,weight);
+    }
+
+    int startNode;
+    printf("Enter the starting node for DFS: ");
+    scanf("%d", &startNode);
+
+    dijkstra(graph,startNode,nodes);
+}
