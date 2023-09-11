@@ -1,0 +1,99 @@
+#include<stdio.h>
+#define n 100
+
+int graph[n][n];
+int visited[n];
+
+int queue[n];
+int front = -1,rear = -1;
+
+void enqueue(int vertex){
+    if(rear == n-1){
+        printf("Overflow\n");
+    }
+    else{
+        if(front == -1){
+            front = 0;
+        }
+        rear++;
+        queue[rear]=vertex;
+    }
+}
+
+int dequeue(){
+    int vertex =-1;
+    if(front == -1){
+        printf("Underflow\n");
+    }
+    else{
+        vertex = queue[front];
+        front++;
+        if(front > rear){
+            front = rear = -1;
+        }
+    }
+    return vertex;
+}
+
+void matrixint(int nodes){
+    for(int i=0;i<nodes;i++){
+        for(int j=0;j<nodes;j++){
+            graph[i][j]=0;
+        }
+    }
+}
+
+void addedge(int from,int to){
+    graph[from][to]=1;
+}
+
+int isEmpty() {
+    return front == -1;
+}
+
+void bfs(int startvertex,int vertices){
+    enqueue(startvertex);
+    visited[startvertex]=1;
+
+    while(!isEmpty()){
+        int currentvertex = dequeue();
+        printf("%d ",currentvertex);
+            
+        for(int i=0;i<vertices;i++){
+            if(graph[currentvertex][i] == 1 && visited[i] == 0){
+                enqueue(i);
+                visited[i] = i;
+            }
+        }
+    }
+}
+
+int main(){
+    int nodes, edges;
+
+    printf("Enter the number of nodes: ");
+    scanf("%d", &nodes);
+
+    printf("Enter the number of edges: ");
+    scanf("%d", &edges);
+
+    matrixint(nodes);
+
+    printf("Enter edges in the format 'from to':\n");
+    for (int i = 0; i < edges; i++) {
+        int from, to;
+        scanf("%d %d", &from, &to);
+        addedge(from, to);
+    }
+
+    for (int i = 0; i < nodes; i++) {
+        visited[i] = 0; // Initialize visited array
+    }
+
+    int startNode;
+    printf("Enter the starting node for DFS: ");
+    scanf("%d", &startNode);
+
+    printf("BFS traversal starting from node %d: ",startNode);
+    bfs(startNode,nodes);
+}
