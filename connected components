@@ -1,0 +1,96 @@
+#include <stdio.h>
+#include <stdbool.h>
+#include <stdlib.h>
+
+#define MAX_NODES 100
+
+
+struct Node {
+    int data;
+    struct Node* next;
+};
+
+struct Graph {
+    struct Node* head;
+};
+
+struct Node* createNode(int data) {
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    newNode->data = data;
+    newNode->next = NULL;
+    return newNode;
+}
+
+
+void initializeGraph(struct Graph* graph, int nodes) {
+    for (int i = 0; i < nodes; i++) {
+        graph[i].head = NULL;
+    }
+}
+
+
+void addEdge(struct Graph* graph, int from, int to) {
+    struct Node* newNode = createNode(to);
+    newNode->next = graph[from].head;
+    graph[from].head = newNode;
+
+    newNode = createNode(from);
+    newNode->next = graph[to].head;
+    graph[to].head = newNode;
+}
+
+void DFS(struct Graph* graph, int node, bool visited[], int componentId) {
+    visited[node] = true;
+    printf("%d ", node);
+
+    struct Node* current = graph[node].head;
+    while (current != NULL) {
+        if (!visited[current->data]) {
+            DFS(graph, current->data, visited, componentId);
+        }
+        current = current->next;
+    }
+}
+
+void findConnectedComponents(struct Graph* graph, int nodes) {
+    bool visited[MAX_NODES];
+    int componentId = 0;
+
+    for (int i = 0; i < nodes; i++) {
+        visited[i] = false;
+    }
+
+    for (int i = 0; i < nodes; i++) {
+        if (!visited[i]) {
+            printf("Connected Component %d: ", componentId);
+            DFS(graph, i, visited, componentId);
+            printf("\n");
+            componentId++;
+        }
+    }
+}
+
+int main() {
+    int nodes, edges;
+
+    printf("Enter the number of nodes: ");
+    scanf("%d", &nodes);
+
+    printf("Enter the number of edges: ");
+    scanf("%d", &edges);
+
+    struct Graph graph[MAX_NODES];
+    initializeGraph(graph, nodes);
+
+    printf("Enter edges in the format 'from to':\n");
+    for (int i = 0; i < edges; i++) {
+        int from, to;
+        scanf("%d %d", &from, &to);
+        addEdge(graph, from, to);
+    }
+
+    printf("Connected Components:\n");
+    findConnectedComponents(graph, nodes);
+
+    return 0;
+}
