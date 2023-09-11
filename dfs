@@ -1,0 +1,58 @@
+#include <stdio.h>
+#define n 100
+
+int graph[n][n];
+int visited[n]; // To track visited nodes
+
+void initializeMatrix(int nodes) {
+    for (int i = 0; i < nodes; i++) {
+        for (int j = 0; j < nodes; j++) {
+            graph[i][j] = 0;
+        }
+    }
+}
+
+void addEdge(int from, int to) {
+    graph[from][to] = 1;
+}
+
+void DFS(int graph[n][n], int node) {
+    printf("%d ", node);
+    visited[node] = 1;
+
+    for (int i = 0; i < n; i++) { // Fixed the loop condition
+        if (graph[node][i] == 1 && visited[i] == 0) {
+            DFS(graph, i);
+        }
+    }
+}
+
+int main() {
+    int nodes, edges;
+
+    printf("Enter the number of nodes: ");
+    scanf("%d", &nodes);
+
+    printf("Enter the number of edges: ");
+    scanf("%d", &edges);
+
+    initializeMatrix(nodes);
+
+    printf("Enter edges in the format 'from to':\n");
+    for (int i = 0; i < edges; i++) {
+        int from, to;
+        scanf("%d %d", &from, &to);
+        addEdge(from, to);
+    }
+
+    for (int i = 0; i < nodes; i++) {
+        visited[i] = 0; // Initialize visited array
+    }
+
+    int startNode;
+    printf("Enter the starting node for DFS: ");
+    scanf("%d", &startNode);
+
+    printf("DFS traversal starting from node %d: ", startNode);
+    DFS(graph, startNode);
+}
